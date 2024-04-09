@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Christian Düben" />
+
+
+<title>Introduction to spaths</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to spaths</h1>
+<h4 class="author">Christian Düben</h4>
+<h4 class="date">Updated: March 18, 2024</h4>
+
+
+
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p style="text-align: justify">
+What is the shortest path from Mombasa, Kenya to Marseille, France by
+boat? It is not the straight line between those locations, as it cuts
+through land. This package applies graph theory to gridded spatial data,
+e.g. deriving shortest paths between places taking barriers or cost
+surfaces into account. In the mentioned example, this would be
+delineating a path along the East African coast, through the Red Sea,
+the Suez Canal, and the Mediterranean. Apart from relating locations on
+Earth, <code>spaths</code> can also compute shortest paths more
+generally on spheres and planes.
+</p>
+<p style="text-align: justify">
+<code>spaths</code> originates from a research project with larger data
+and more extensive computations than earlier R packages in this field
+could handle. Like other packages, previous versions of
+<code>spaths</code> used the <code>igraph</code> package, a wrapper for
+a C library, for graph theoretical algorithms. To further optimize
+computational performance and tailor the code to the gridded, spatial
+use case, <code>spaths</code> dropped the <code>igraph</code> dependency
+and now comes with its own C++ graph theory implementation.
+</p>
+<p style="text-align: justify">
+Apart from computational performance, <code>spaths</code> is geared
+towards user friendliness. Users do not have to understand how
+graph-theoretical algorithms, transition functions, or spatial distance
+functions work. And via a set of parameters, they can choose an
+implementation that fits their machine’s capabilities and the
+application’s prerequisites. Another aspect of user friendliness is the
+ease of installation. Linux users without administrator rights often
+struggle to install geospatial or other packages that build on external
+system libraries. To prevent such issues, <code>spaths</code> comes with
+few dependencies. Apart from core packages by default installed with R,
+users only have to install <code>Rcpp</code> and
+<code>data.table</code>. Installing <code>terra</code> is optional and
+only required, when using <code>terra</code> objects as inputs.
+</p>
+<p style="text-align: justify">
+The package is written to be a foundation upon which other packages
+build. As <code>igraph</code> has become a dependency for
+graph-theoretical software more broadly, <code>spaths</code> aims to be
+the dependency for applications connecting points in grids. The
+extensions of <code>spaths</code> can be in the geospatial domain,
+computing e.g. sailing vessel routes taking wind patterns and ocean
+currents into account, animal migration influenced by terrain topology
+and vegetation, or optimal paths for Mars explorations. However, they
+can also target biomedical studies or any other question connecting
+points in a grid. All you have to do for most extensions is to pass a
+custom transition function to the <code>tr_fun</code> parameter that
+tells <code>spaths</code> how to compute transitions costs between cells
+from one or more grid layers.
+</p>
+<p><br></p>
+</div>
+<div id="graphs" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Graphs</h1>
+<p style="text-align: justify">
+Before <code>spaths</code> applies graph-theoretical algorithms, like
+shortest paths identifications, it converts the spatial data into a
+graph. A graph consists of vertices, also called nodes, that are
+connected via edges. In <code>spaths</code>, grid cell centroids are
+vertices linked to neighboring cells’ centroids through edges. Which
+neighbors are connected depends on the <code>contiguity</code> argument.
+Figure 1 illustrates the parameter’s two options: rook’s case contiguity
+and queen’s case contiguity. In the former model, a cell is directly
+connected to its four horizontally and vertically adjacent neighbors.
+With the latter structure, a cell is also directly linked to the four
+diagonally adjacent neighbors, implying a total of eight direct
+neighbors.
+</p>
+<p><br></p>
+<div class="figure" style="text-align: center">
+<img src="data:image/png;base64,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PSJnaW1wOmRvY2lkOmdpbXA6MDE3MzNkN2EtZDNlNC00NjJjLWExMTgtNDBlMDU1MTA0NGUwIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjk5Y2YxN2NlLTg4YmItNDM3Mi1hMTkxLWY4YzYzZjkzZTVhNSIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOmQ0MmZkM2VlLTQ5OTYtNDc2Mi05NzlmLTk5Nzc0YTE2Yzc2MCIKICAgZGM6Rm9ybWF0PSJpbWFnZS9wbmciCiAgIEdJTVA6QVBJPSIyLjAiCiAgIEdJTVA6UGxhdGZvcm09IldpbmRvd3MiCiAgIEdJTVA6VGltZVN0YW1wPSIxNjU5MjExNzQxMjE1NzM5IgogICBHSU1QOlZlcnNpb249IjIuMTAuMzIiCiAgIHRpZmY6T3JpZW50YXRpb249IjEiCiAgIHhtcDpDcmVhdG9yVG9vbD0iR0lNUCAyLjEwIgogICB4bXA6TWV0YWRhdGFEYXRlPSIyMDIyOjA3OjMwVDIyOjA4OjUzKzAyOjAwIgogICB4bXA6TW9kaWZ5RGF0ZT0iMjAyMjowNzozMFQyMjowODo1MyswMjowMCI+CiAgIDx4bXBNTTpIaXN0b3J5PgogICAgPHJkZjpTZXE+CiAgICAgPHJkZjpsaQogICAgICBzdEV2dDphY3Rpb249InNhdmVkIgogICAgICBzdEV2dDpjaGFuZ2VkPSIvIgogICAgICBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmI0ODc2M2Q4LTliMjMtNDI4OC05YzdjLTBhY2ExY2Y0ZjY5ZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iR2ltcCAyLjEwIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMi0wNy0zMFQyMjowOTowMSIvPgogICAgPC9yZGY6U2VxPgogICA8L3htcE1NOkhpc3Rvcnk+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9InciPz5sMUngAAAAmVBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZrY6AAA6OgA6Ojo6OmY6Zjo6ZpA6ZrY6kLY6kNtmAABmOgBmOjpmOmZmkLZmkNtmtttmtv+QOgCQOjqQZgCQZjqQZmaQttuQ2/+2ZgC2Zjq2kDq2kGa229u22/+2///bkDrbkGbbtmbbtpDb27bb/7bb////tmb/25D/27b//7b//9v///+v0a84AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5gceFAkBs8Uu8AAACnpJREFUeNrt3H1/msgaxvE7bROXnnZNqyd2d6V2S+qm52CNvv8XtzM8+ACjQVDuyfibP/qxCYHr/joMA4Kypmk2gQB//Gn440/DH38a/vjT8Mefhj/+NGV/KZtPyYPIJM3X6VHB4WSSZmut/N+LSoPIJC+vtsnP+i41mExy6lq1qw0sk7RYrWaxoWWSo6tt+cuLlhpWJmn7lyrFhpfpmP9L29WoNbRM0r6U/osNMJO035V739tDzCQd6ui52CAzSZf9uO9aA8wknYros9gwM+H/WvznIhOval1+NgPr+9irTP8zmW4+PF7A/9fAM/95ccnxzr9MN1+7+TsWfzL8df8ei61uyfaHvA39y3SbNs3UzH/5V7Zan/xnWTdb3teL1ctkuv+bx/U/p+wAjfyfTZVv/fJffck7/sKU/MMX/++fB5NM6/z+H/5/75f/H1EWxyv/PNm3eqSu/qM42wec/tJXc+afOQ/AipnmruNv1/G/GINc/qLqv3CMirqZ7HEpXvfnr7qv2wnHnVeZ7HHp/PMfT/0XA0ep2n0i6xTDa/B/cvKr+9tDQOM58Sv2t2P/x3TtT6blNBqcOidrfP3B6a95rr9wnPrqZrJEQ2f/P8P1H9/8y2I98i/mPj/rk4IA/WebOWBlX1fMtLn+Uz0BCM/fxvHOP5uQWf7Jupu/4w9c/oqf9S3kgL/u549L5/X/Np//8vl7L5m4/0Q3E/df6Wbi/kPdTNx/q5uJ+891M/H8hW4mnj/SzcTzd7qZeP5UNxPPX+tm4vsHdDPx/RvK79gZT7T9O/f0PxP++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/7443+t/lI2r+oMIZM0X6dHBYeTSZqttfJ/LyoNIpO8vNomP+u71GAyyalr1a42sEzSYrWaxYaWSY6utuUvL1pqWJmk7V+qFBteJml9HqFTa2iZpH0p/RcbYCZpvyv3vreHmEk61NFzsUFmki77cd+1BphJOhXRZ7FhZsL/1fjPRIYe1br6UlzzGnrkv3r6TeTtwyX8F+KX//O9f/5lnxh283ctnpU71NvZa1v6NZBTi714plkR6eZr00yN/Wfimf9c5E75AFDdUj5ELO/ryTr7L8Q3f9MhJp75m0i3qekZN9HH9Lz+ZvR598krfzPU3vxnIDcP/vjb0X944gSoob95Zx++uP2lr3Zg+L/zJpM9RD58N31inJ7Z34w+dyu3vyj5LzY/n/iSaTMjy0ahM/qbFb/5ccBfa/z5J5IPj9mx7jb1JNPWv/mcrJH/3HYyz/y3u0F1sqfr/7BeGqg3P87ob4bau7Wn/iabV/53J2Zq4j/fGfCGntS6mkaDiWf+toeexb+y+GF/vXP9stZFbV9XvP5QzP/r/t2u//jon4V6cJ1rKmayc7Lf09WftTnBOa6/ucZ/xVo3kw294cc5AJ04TL9a//IE7GbiUabnTzn/x3U3f9cfOPx1P+tb/mUqff+49inTypz+yru4eSY+f9fNxP0nupm4/0o3E/cf6mbi/lvdTNx/rpuJ5y90M/H8kW4mnr/TzcTzp7qZeP5aNxPfP6Cbie/f0M2EP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjjz/++OOPP/74448//vjjj7+Gv5TNqzpDyCTN1+lRweFkkmZrrfzfi0qDyCQvr7bJz/ouNZhMcupatasNLJO0WK1msaFlkqOrbfnLi5YaViZp+5cqxYaXSVqfR+jUGlomaV9K/8UGmEna78q97+0hZpIOdfRcbJCZpMt+3HetAWaSTkX0WWyYmfD33//5fnNJ7zb1p9afn02g94lX/k+/ibwdp9fgPy8iDf3xX82cSif7VxY/7N9jsdUt/RoUkW6+rn3JVHYJuWu8A0jz4cpWPPSpViP/06dMtp/epatvp/SJ5v6rL6e8rxf3n+VpZvVQaplMB7XwFmp4fn/T4d788NHfm/6/KIRmJ4zTjf3tzjVxLSl9tXW1WNPZngbOfV0nUx4p6//n9587Duvr/gqtn8Mfmv/oZcrH/yxYdaTo7O/u/orjz9oe51z8umNi0c7u7+7+irU+f5KTJ9uXzmRHnsv4u47p6n3t9nG9vPdo/mOYvpvj0X/n5x//fzmOc+pz7cnOnMMP/72pWXv/+uIL1+RT81z/sL9eptW3aDB0jhWdr3863lJ9/3f5+OPPNamZzbT6u37+29Vff/ivbWtzraV5X+vjBMx9/ecc/hO//Ivpp8hHfzKtz3T98+DRTrHU+tby6/+xT5ns/EfePpzgxOfvupm4/0Q3E/df6Wbi/kPdTNx/q5uJ+891M/H8hW4mnj/SzcTzd7qZeP5UNxPPX+tm4vsHdDN5+AUWV9Xwxx9/Gv740/DHn4Y//jT88afhjz8Nf/xp+ONPwx9/Gv740wLwT6OoTezx5mWy8xr/01si0/1EpkXRNOnun0yjaDRO8D/eYkmq/rbFDf3TA0smUbGiEf7HW7S3A+ReiUjazH8tiXu3Evs9hGkyOroi/Ks7QNFfx5J08o82P47xr7axGZm3Q/z+CFL4F2+KHcPLBXde5/75oSNbMB2P9sb6ylFld4M7iyZjc4SIr8+/MsSPRnX/acYa5wuO15XX2b87xuVgv+nqY+dBJd5fNMlfTa9z/DEQG6yqfzrOVBKJDKMZwpP915n/bhfP361k+82zU8eon29wu2gqdo9Ij490AY//m3E/2cWSnU5Z0GTSu6+t/94IU+N2+ecb3P6mfNuj6dX5J/F0asaBjX9S9c9JRqWQ7L82/vsDvNk54iQ94r/d4HbRkejPUHX8y8qd/qNsgewn5bnxVPZfm4Wi/dOuxK5ytF1NZVDZ3eBm0fIEQaIr8zeDu+2BB8afUX5VIjna/yWeVs670iTezjkr85/KBotFR4ruqv5FV97414+/dpQ4Ov5PywPp/jlX7J7/VzeYL6p64NX0z0aXtJjKHJh/xpb46PxnPdr6Zd1770TOnv9mo409EuxucLtovka7N1yZfzHvLv2c51+me49fmP+n2z4e1WfyiWxnUrsb3Fm0XGR8Zf72THY0Tsvu6rz+YN+A+IXz3+IokU9vatdM03h7/XNng7uL2lPhly61Xtv1t+tqHvj7cBi8Yv9Errj7v9bPH/Gn4Y8/DX/8afjjT8Mffxr++NPwx5+GP/40/PGn4e9h+xeUlBu0A2OgIAAAAABJRU5ErkJggg==" alt="Figure 1: Contiguity" width="46%" height="30%" /><img src="data:image/png;base64,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emtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNC40LjAtRXhpdjIiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6R0lNUD0iaHR0cDovL3d3dy5naW1wLm9yZy94bXAvIgogICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgIHhtcE1NOkRvY3VtZW50SUQ9ImdpbXA6ZG9jaWQ6Z2ltcDoxZDQ2NjQxNC1hZjE5LTQ1OTgtYmYwYi0xODRhMTM0MjlhZDUiCiAgIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MGJlMjczMTEtODYxYS00NGVkLTgyYTYtNWRlZjQ3YjZmNTYzIgogICB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YjMwMWIwMWMtZTFkZC00ZDk5LTkyYmMtMGI1MzJmNzc0MmI4IgogICBkYzpGb3JtYXQ9ImltYWdlL3BuZyIKICAgR0lNUDpBUEk9IjIuMCIKICAgR0lNUDpQbGF0Zm9ybT0iV2luZG93cyIKICAgR0lNUDpUaW1lU3RhbXA9IjE2NTk1MTU0OTkzNTMwNjEiCiAgIEdJTVA6VmVyc2lvbj0iMi4xMC4zMiIKICAgdGlmZjpPcmllbnRhdGlvbj0iMSIKICAgeG1wOkNyZWF0b3JUb29sPSJHSU1QIDIuMTAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjI6MDg6MDNUMTA6MzE6MzcrMDI6MDAiCiAgIHhtcDpNb2RpZnlEYXRlPSIyMDIyOjA4OjAzVDEwOjMxOjM3KzAyOjAwIj4KICAgPHhtcE1NOkhpc3Rvcnk+CiAgICA8cmRmOlNlcT4KICAgICA8cmRmOmxpCiAgICAgIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiCiAgICAgIHN0RXZ0OmNoYW5nZWQ9Ii8iCiAgICAgIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ZTFjNDg3ZWQtMDRjMi00NTMwLTkyMGEtYzRhNGVjMjRiZDZkIgogICAgICBzdEV2dDpzb2Z0d2FyZUFnZW50PSJHaW1wIDIuMTAgKFdpbmRvd3MpIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTA3LTMwVDIyOjEyOjUzIi8+CiAgICAgPHJkZjpsaQogICAgICBzdEV2dDphY3Rpb249InNhdmVkIgogICAgICBzdEV2dDpjaGFuZ2VkPSIvIgogICAgICBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjAwYzZkZmRhLTJmMGUtNDYxZC05ZjdlLTkyOWQzZWMyZWM5MiIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iR2ltcCAyLjEwIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMi0wOC0wM1QxMDozMTozOSIvPgogICAgPC9yZGY6U2VxPgogICA8L3htcE1NOkhpc3Rvcnk+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9Inci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" alt="Figure 1: Contiguity" width="46%" height="30%" />
+<p class="caption">
+Figure 1: Contiguity
+</p>
+</div>
+<p><br></p>
+<p style="text-align: justify">
+<code>spaths</code> uses queen’s case contiguity by default as it often
+produces more appropriate shortest paths than rook’s case contiguity
+does. The advantages of rook’s case contiguity are that the fewer edges
+imply lower RAM requirements and shorter computational times of shortest
+path algorithms than with queen’s case contiguity.
+</p>
+<p style="text-align: justify">
+There are other types of contiguity that directly connect a cell to
+second order neighbors. This can produce paths that look smoother, as it
+permits the algorithm to traverse the grid at a larger set of angles.
+Yet, <code>spaths</code> does currently not implement such type of
+contiguity because it would allow the algorithm to jump over barriers
+that are one cell wide. In an application deriving ship routes, the
+algorithm could jump over e.g. islands and peninsulas.
+</p>
+<p style="text-align: justify">
+All of the input grid’s, i.e. <code>rst</code> argument’s,
+non-<code>NA</code> pixels become part of the graph. In the example of
+ship route estimations, you would set all land pixels to
+<code>NA</code>, restricting ships to only traverse water cells. The
+number of of non-<code>NA</code> cells and thereby size of the graph is
+the most important determinant of RAM requirements and execution time.
+Crop the grid to the relevant area or set irrelevant pixels to
+<code>NA</code> to boost efficiency.
+</p>
+<p style="text-align: justify">
+Shortest paths algorithms, like the here used Dijkstra’s <span class="citation">(1959)</span> algorithm, minimize the sum of edge
+weights along the paths between origins and destinations. By default,
+the edge weight in <code>spaths</code> is the geographic distance
+between the centroids of the respective neighboring cells. Figure 2
+illustrates edge weights as distance in kilometers between a cell at 1°N
+1°E an its neighboring cells under queen’s case contiguity in an
+unprojected, i.e. lonlat, grid of a one degree resolution. The use of
+kilometers is for visualization purposes and deviates from the actual
+implementation which uses meters in most cases, as the documentation
+states.
+</p>
+<p style="text-align: justify">
+In calculating distances between locations distributed around the globe,
+it is usually best to use unprojected data. Projections,
+i.e. transfering coordinates from a spheroid or ellipsoid onto a two
+dimensional plane, necessarily distort the input. These distortions can
+severely bias distances between cells. Projections are designed for
+specific, often regional, applications. If you are not sure whether a
+projection allows for correct distances in your case, use unprojected
+data. This phenomenon is not specific to <code>spaths</code>, but holds
+for any GIS software. Another caveat of using projections is that
+<code>spaths</code>, like <code>terra</code>, does not connect cells
+across the projected grid’s edges, even if the data is global. Meaning
+it does not connect the left most cells to the right most cells in the
+grid. However, when the data is unprojected and global, it does connect
+them. This applies to any <code>rst</code> input class, including a
+SpatRaster, a RasterLayer, and a matrix or a list of matrices with
+<code>spherical = TRUE</code>.
+</p>
+<p><br></p>
+<div class="figure" style="text-align: center">
+<img src="data:image/png;base64,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" alt="Figure 2: Edge Weights" width="46%" />
+<p class="caption">
+Figure 2: Edge Weights
+</p>
+</div>
+<p><br></p>
+<p style="text-align: justify">
+<code>spaths</code> defaults to the fastest ways of deriving geographic
+distances. It uses optimized Haversine distance computations for
+unprojected data on Earth or other spherical objects and optimized
+Euclidean distance computations for planar data. If you want account for
+Earth’s ellipsoid shape rather than working with spherical distances and
+computational efficiency is not a top priority, set
+<code>dist_comp</code> to <code>&quot;terra&quot;</code>, which derives distances
+via <code>terra::distance</code>. <code>terra</code> is a great and
+performant package. What makes the <code>&quot;terra&quot;</code> option slower
+than <code>&quot;spaths&quot;</code> in <code>dist_comp</code> is that it triggers
+the function to derive distances between all neighboring cells
+separately and export them from R to C++ while the latter choice
+computes them in a way tailored to this application in the graph
+construction phase in C++. This implementation e.g. leverages the
+occurrence of repeated distance values in gridded data.
+</p>
+<p style="text-align: justify">
+Edge weights do not have to be geographic straight line distances
+between cell centroids. With a custom transition function passed to
+<code>tr_fun</code>, you can freely define them in a different way. In
+this function, you may use the parameters <code>d</code> (distance
+between the pixel centroids), <code>x1</code> (x coordinate or longitude
+of the first cell), <code>x2</code> (x coordinate or longitude of the
+second cell), <code>y1</code> (y coordinate or latitude of the first
+cell), <code>y2</code> (y coordinate or latitude of the second cell),
+<code>v1</code> (<code>rst</code> layers’ values from the first cell),
+<code>v2</code> (<code>rst</code> layers’ values from the second cell),
+and <code>nc</code> (number of CPU cores set by <code>ncores</code>).
+The algorithm moves from the first to the neighboring second cell. If
+the data is unprojected, i.e. lonlat, or if
+<code>dist_comp = &quot;terra&quot;</code>, <code>d</code> is measured in meters.
+Otherwise, it uses the units of the CRS. If <code>rst</code> has one
+layer, the values are passed to <code>v1</code> and <code>v2</code> as
+vectors. Otherwise they are passed as a data table, if
+<code>v_matrix</code> is <code>FALSE</code> (default), and as a matrix,
+if <code>v_matrix</code> is <code>TRUE</code>. The function has to be
+callable from R, but does not have to be written in R. It can e.g. be a
+C++ function implemented via the <code>Rcpp</code> package.
+</p>
+<p style="text-align: justify">
+A common transition function is Tobler’s <span class="citation">(1993)</span> hiking function. It estimates the travel
+time between locations conditional on terrain topography. To illustrate
+this use case, imagine that the input grid is a digital elevation model.
+It consists of one layer and the pixel values document the location’s
+elevation in meters. This <code>tr_fun</code> function then expresses
+the transition cost in terms of the hours it takes to travel between
+cell centroids according to Tobler:
+<code>function(d, v1, v2) d / (6000 * exp(-3.5 * abs((v2 - v1) / d + 0.05)))</code>.
+It combines the straight line distance in meters <code>d</code> with the
+altitude difference, i.e. the value of the second cell <code>v2</code>
+minus the value of the first cell <code>v1</code>. Tobler’s <span class="citation">(1993)</span> hiking function produces asymmetric edge
+weights. Walking uphill is not equally fast as walking downhill. This
+results in a directed graph, meaning transition cost depends on the
+direction in which the algorithm traverses between grid cells. So, the
+<code>tr_directed</code> argument has to be <code>TRUE</code>.
+</p>
+<p style="text-align: justify">
+With transition functions generating symmetric edge weights,
+<code>tr_directed</code> should always be set to <code>FALSE</code>,
+improving computational performance. Tobler’s <span class="citation">(1993)</span> function would e.g. produce symmetric
+transition costs in the absence of the <code>+ 0.05</code>. The
+<code>tr_directed</code> parameter only has an effect in the presence of
+custom transition functions, i.e. if <code>tr_fun</code> is not
+<code>NULL</code>. Otherwise, the graph is always undirected.
+</p>
+<p style="text-align: justify">
+As already mentioned, <code>spaths</code> is not restricted to
+geographic applications. Here is an arbitrary transition function
+combining various layers of <code>rst</code>:
+<code>function(v1, v2) v1[[1L]] * v2[[1L]] + v1[[2L]] * v2[[2L]]</code>.
+This multiplies the first cell’s value in the first layer with the
+second cell’s value in the first layer and adds it to the cells’ second
+layer product.
+</p>
+<p style="text-align: justify">
+It is recommended to use vectorized R functions like the ones above. It
+computes all edge weights without explicitly calling an iterative
+structure like <code>for</code>, <code>*apply</code>, or
+<code>foreach</code> loops. R loops are slow. If your function requires
+a loop, write it in C++. Here is an example with
+<code>v_matrix = TRUE</code>, the Armadillo C++ library, C++ 20, and
+<code>...</code> as a placeholder for the function body:
+</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>Rcpp<span class="sc">::</span><span class="fu">sourceCpp</span>(<span class="at">code =</span> <span class="st">&#39;</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="st">  #include &lt;RcppArmadillo.h&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="st">  // [[Rcpp::depends(RcppArmadillo)]]</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="st">  // [[Rcpp::plugins(cpp20)]]</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">  // [[Rcpp::export]]</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="st">  Rcpp::NumericVector example_tr_fun(arma::mat &amp;v1, arma::mat &amp;v2, Rcpp::NumericVector &amp;d) {</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="st">    ...</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="st">&#39;</span>)</span></code></pre></div>
+<p><br></p>
+</div>
+<div id="output" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Output</h1>
+<p style="text-align: justify">
+By default, <code>shortest_paths</code> returns distances. These
+distances are the sum of edge weights along the shortest paths between
+points. Without a custom transition function, it is the geographic
+distance between the centroids of the cells on a path between two
+points. It is the length of the path in meters, unless you use a
+projection with different units. With a custom transition function, the
+distance or length of the path is expressed in whatever units the
+transition function returns, such as hours of travel time with Tobler’s
+<span class="citation">(1993)</span> hiking function.
+</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">crs =</span> <span class="st">&quot;epsg:4326&quot;</span>, <span class="at">resolution =</span> <span class="dv">2</span>, <span class="at">vals =</span> <span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)))</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>destination_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, destination_pts)</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">1</span>  <span class="dv">13313293</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">6158046</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>  <span class="dv">15837664</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">1</span>   <span class="dv">9137621</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">2</span>  <span class="dv">16130624</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">4810903</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="dv">7</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">1</span>  <span class="dv">15919393</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="dv">8</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">2</span>  <span class="dv">10787554</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="dv">9</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">3</span>  <span class="dv">19275995</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Instead of distances, <code>shortest_paths</code> can output the path
+lines or lines and distances jointly.
+</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">output =</span> <span class="st">&quot;lines&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a> class       <span class="sc">:</span> SpatVector </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a> geometry    <span class="sc">:</span> lines </span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a> dimensions  <span class="sc">:</span> <span class="dv">3</span>, <span class="dv">3</span>  (geometries, attributes)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a> extent      <span class="sc">:</span> <span class="sc">-</span><span class="dv">179</span>, <span class="dv">179</span>, <span class="sc">-</span><span class="dv">63</span>, <span class="sc">-</span><span class="dv">1</span>  (xmin, xmax, ymin, ymax)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a> coord. ref. <span class="sc">:</span> lon<span class="sc">/</span>lat WGS <span class="dv">84</span> (EPSG<span class="sc">:</span><span class="dv">4326</span>) </span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a> names       <span class="sc">:</span> origins destinations connected</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a> type        <span class="sc">:</span>   <span class="er">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>logical<span class="sc">&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a> values      <span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>      <span class="cn">TRUE</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>                     <span class="dv">1</span>            <span class="dv">3</span>      <span class="cn">TRUE</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>                     <span class="dv">2</span>            <span class="dv">3</span>      <span class="cn">TRUE</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">output =</span> <span class="st">&quot;both&quot;</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a> class       <span class="sc">:</span> SpatVector </span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a> geometry    <span class="sc">:</span> lines </span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a> dimensions  <span class="sc">:</span> <span class="dv">3</span>, <span class="dv">3</span>  (geometries, attributes)</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a> extent      <span class="sc">:</span> <span class="sc">-</span><span class="dv">179</span>, <span class="dv">179</span>, <span class="sc">-</span><span class="dv">63</span>, <span class="sc">-</span><span class="dv">1</span>  (xmin, xmax, ymin, ymax)</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a> coord. ref. <span class="sc">:</span> lon<span class="sc">/</span>lat WGS <span class="dv">84</span> (EPSG<span class="sc">:</span><span class="dv">4326</span>) </span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a> names       <span class="sc">:</span> origins destinations distances</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a> type        <span class="sc">:</span>   <span class="er">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a> values      <span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span> <span class="fl">1.963e+07</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>                     <span class="dv">1</span>            <span class="dv">3</span>  <span class="fl">7.29e+06</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>                     <span class="dv">2</span>            <span class="dv">3</span> <span class="fl">1.447e+07</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+When no destinations are specified, <code>shortest_paths</code> computes
+the paths between all origin combinations. If transition costs are
+symmetric, i.e. traveling from cell A to neighboring cell B is as
+expensive as traveling from B to A, the function by default only returns
+distances in one direction to boost computational efficiency and lower
+the RAM requirements of the return object. If you would like the output
+to report on both directions, set <code>bidirectional</code> to
+<code>TRUE</code>.
+</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">bidirectional =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">1</span>  <span class="dv">19627694</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">1</span>   <span class="dv">7290325</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">2</span>  <span class="dv">14467797</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+The distance from a point to itself is zero. So, irrespective of what
+arguments you pass to <code>shortest_paths</code>, the function never
+returns paths from points to themselves.
+</p>
+<p style="text-align: justify">
+If you do not want to connect all origins to all destinations, specify
+<code>pairwise = TRUE</code>. This connects the first origin to the
+first destination, the second origin to the second destination, etc. For
+computational optimization, the function can change the order of the
+results. In the example below, the first row contains the distance
+between the second origin and the second destination. Always check the
+output’s origins and destinations variables regarding which points an
+estimate refers to.
+</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, destination_pts, <span class="at">pairwise =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">2</span>  <span class="dv">16130624</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">1</span>  <span class="dv">13313293</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">3</span>  <span class="dv">19275995</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+The origins and destinations variables by default refer to the row
+numbers in the <code>origins</code> (and <code>destinations</code>)
+inputs. You can make <code>shortest_paths</code> to utilize other names
+by specifying a column in <code>origins</code> (and
+<code>destinations</code>) containing point names. These names can be of
+types <code>character</code>, <code>integer</code>, and
+<code>numeric</code>.
+</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>origin_pts<span class="sc">$</span>name <span class="ot">&lt;-</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">origin_names =</span> <span class="st">&quot;name&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="sc">&lt;</span>char<span class="sc">&gt;</span>       <span class="er">&lt;</span>char<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       a            b  <span class="dv">19627694</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       a            c   <span class="dv">7290325</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       b            c  <span class="dv">14467797</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Unconnected points are marked with <code>Inf</code> in the
+<code>distances</code> variable, if <code>distance_type</code> is
+<code>&quot;double&quot;</code> or <code>&quot;float&quot;</code>, with <code>NA</code>, if
+<code>distance_type</code> is <code>&quot;int&quot;</code> or
+<code>&quot;unsigned short int&quot;</code>, and with a <code>connected</code>
+variable, if distances are not returned. Integers use <code>NA</code>
+rather than <code>Inf</code> because <code>Inf</code> is a numeric, not
+an integer, value.
+</p>
+<p style="text-align: justify">
+If <code>output = &quot;distances&quot;</code>, the output is by default returned
+as a data table. Data tables are data frames and you can use them in
+methods expecting data frames. If you want the result to be a data frame
+only, not a data table, set <code>output_class</code> to
+<code>&quot;data.frame&quot;</code>.
+</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">output_class =</span> <span class="st">&quot;data.frame&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  origins destinations distances</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="dv">1</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="dv">2</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="dv">3</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+If <code>output</code> is <code>&quot;lines&quot;</code> or <code>&quot;both&quot;</code>,
+the the function returns a SpatVector, if <code>rst</code> is a
+SpatRaster or a RasterLayer, and a list, if <code>rst</code> is a matrix
+or a list of matrices. Explicitly setting <code>output_class</code> to
+<code>&quot;list&quot;</code> returns a list in any case.
+<code>output_class = &quot;SpatVector&quot;</code>, however, returns a SpatVector
+only if <code>rst</code> is a SpatRaster or a RasterLayer.
+</p>
+<p><br></p>
+</div>
+<div id="grid-updating" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Grid Updating</h1>
+<p style="text-align: justify">
+<code>NA</code> cells in <code>rst</code> act as barriers. They mark the
+cells which the algorithm must not travel through. What if these
+barriers move? In the example of ships moving between ports, these
+moving barriers could be Caribbean hurricanes. Ships do not go through
+the storms, but around them.
+</p>
+<p style="text-align: justify">
+Assume each hurricane is documented with a separate polygon. You could
+mask the <code>rst</code> grid with the different polygons, create one
+grid per hurricane, and loop over these grids with
+<code>shortest_paths</code>. This would reestimate all shipping routes
+in each call of <code>shortest_paths</code>. Even lines not passing
+through the Caribbean, e.g. routes between India and Australia, would be
+recomputed. On top of that, each iteration would check the inputs and
+convert them into the format used by the algorithm. It is an inefficient
+strategy.
+</p>
+<p style="text-align: justify">
+<code>shortest_paths</code> comes with an efficient solution to the
+moving barrier case. You pass the hurricane polygons to
+<code>update_rst</code> and the function computes the shortest paths in
+a hurricane-free grid and the grids subject to hurricanes. It just
+recomputes paths affected by a hurricane and is much more efficient than
+looping over <code>shortest_paths</code> is.
+</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>barrier <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">vect</span>(<span class="st">&quot;POLYGON ((-179 -25, 100 -25, 100 -26, -179 -26, -179 -25))&quot;</span>, <span class="at">crs =</span> <span class="st">&quot;epsg:4326&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">update_rst =</span> barrier)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>   origins destinations distances layer</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span>     <span class="dv">0</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span>     <span class="dv">0</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span>     <span class="dv">0</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span>     <span class="dv">1</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>  <span class="dv">13207350</span>     <span class="dv">1</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">15465933</span>     <span class="dv">1</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>barriers <span class="ot">&lt;-</span> <span class="fu">list</span>(barrier, terra<span class="sc">::</span><span class="fu">vect</span>(<span class="st">&quot;POLYGON ((0 20, 1 20, 1 -20, 0 -20, 0 20))&quot;</span>, <span class="at">crs =</span> <span class="st">&quot;epsg:4326&quot;</span>))</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">update_rst =</span> barriers)</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>   origins destinations distances layer</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span>     <span class="dv">0</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span>     <span class="dv">0</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span>     <span class="dv">0</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span>     <span class="dv">1</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>  <span class="dv">13207350</span>     <span class="dv">1</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">15465933</span>     <span class="dv">1</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="dv">7</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19813077</span>     <span class="dv">2</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="dv">8</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span>     <span class="dv">2</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="dv">9</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span>     <span class="dv">2</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Layer 0 is the hurricane-free base grid, layer 1 is the hurricane-free
+base grid updated with the first polygon, and layer 2 is the
+hurricane-free base grid updated with the second polygon. Each layer
+updates the unmodified <code>rst</code>, not the grid already updated by
+another polygon. <code>update_rst</code> sets cells covered by the
+respective polygon to <code>NA</code>. It never sets cells to any other
+value than <code>NA</code>.
+</p>
+<p style="text-align: justify">
+The actual implementation does not truly update <code>rst</code> or the
+graph, but marks the respective cells as blocked in a more efficient
+way. The internal strategy obtains the same results, but is much faster
+than physically updating the grid would be. So, you should treat
+<code>update_rst</code> as a method of setting any <code>rst</code>
+cells that it intersects with to <code>NA</code>, irrespective of the
+optimized implementation.
+</p>
+</div>
+<div id="shortest-paths-between-non-earth-locations" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Shortest Paths between
+Non-Earth Locations</h1>
+<p style="text-align: justify">
+<code>spaths</code> is not limited to geographic locations on Earth. The
+functions can be applied to other scenarios connecting points in grids.
+These can be of a geographic nature, like other planets, or
+non-geographic subjects.
+</p>
+<p style="text-align: justify">
+As an example, we consider astronauts walking on Mars. Non-Earth
+applications must provide <code>rst</code> as a matrix or a list of
+matrices. The SpatRaster and RasterLayer inputs are restricted to
+evaluations on Earth. If <code>rst</code> is a matrix or a list of
+matrices, the parameters <code>spherical</code>, <code>radius</code>,
+and <code>extent</code> define what that matrix refers to. In our
+Martian example, we define <code>rst</code> to be a global, unprojected
+grid of a two degree resolution.
+</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Because the data is unprojected, meaning it is expressed in degrees on a
+sphere, not points on a plane, we specify <code>spherical = TRUE</code>.
+Mars’ radius is <code>3389500</code> meters and the grid’s global nature
+implies an <code>extent</code> of <code>c(-180, 180, -90, 90)</code>. It
+stretches from -180 to 180 in the x dimension and -90 to 90 in the y
+dimension.
+</p>
+<p style="text-align: justify">
+When <code>rst</code> is a matrix or a list of matrices,
+<code>origins</code> (and <code>destinations</code>) are supplied as a
+matrix, data frame, or data table of coordinates, with columns named
+<code>x</code> and <code>y</code>. The Martian example uses a data
+table.
+</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>))</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">8229741</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+<code>dist_comp = &quot;terra&quot;</code> is not available in non-Earth-based
+scenarios. Unless, you compute edge weights through a custom transition
+function, they are derived through the <code>dist_comp = &quot;spaths&quot;</code>
+methods. Custom transition functions work essentially like they do for
+Earth. A difference is that grid layers are not passed as layers of a
+single SpatRaster, but as matrices in a list. As in the SpatRaster case,
+the layers can be accessed by index and name.
+</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">even_terrain =</span> input_grid, <span class="at">temperature =</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(16200L, <span class="dv">20</span>, <span class="dv">5</span>), <span class="at">nrow =</span> <span class="dv">90</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>custom_tr <span class="ot">&lt;-</span> <span class="cf">function</span>(v1, v2) v1[[1L]] <span class="sc">*</span> v2[[1L]] <span class="sc">+</span> v1[[2L]] <span class="sc">*</span> v2[[2L]]</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>custom_tr <span class="ot">&lt;-</span> <span class="cf">function</span>(v1, v2) v1[[<span class="st">&quot;even_terrain&quot;</span>]] <span class="sc">*</span> v2[[<span class="st">&quot;even_terrain&quot;</span>]] <span class="sc">+</span> v1[[<span class="st">&quot;temperature&quot;</span>]] <span class="sc">*</span> v2[[<span class="st">&quot;temperature&quot;</span>]]</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">tr_fun =</span> custom_tr)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="fl">15973.37</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>  <span class="fl">10254.19</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">1</span>  <span class="fl">15973.37</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="fl">17432.90</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">1</span>  <span class="fl">10254.19</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">3</span>            <span class="dv">2</span>       <span class="cn">Inf</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Grid updating is not done with a SpatVector, but a vector of cell
+numbers, a matrix, or a list of either. The vector’s cell numbers mark
+the cells to set to <code>NA</code>. <code>spaths</code> counts cells
+like <code>terra</code> does, starting with one in the top left, then
+increasing from left to right and afterwards from top to bottom. This
+differs from how R base matrices enumerate cells, which iterate first
+from top to bottom and second from left to right. If
+<code>update_rst</code> is a matrix, it must be of the same dimensions
+as <code>rst</code> and marks cells to be updated using <code>NA</code>
+values. Cells with non-<code>NA</code> values in an
+<code>update_rst</code> matrix are not updated.
+</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>barrier_vector <span class="ot">&lt;-</span> <span class="fu">sample.int</span>(16200L, 10L)</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">update_rst =</span> barrier_vector)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>   origins destinations distances layer</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">8229741</span>     <span class="dv">0</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span>     <span class="dv">0</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span>     <span class="dv">0</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">8229741</span>     <span class="dv">1</span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span>     <span class="dv">1</span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span>     <span class="dv">1</span></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>barrier_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep.int</span>(1L, 16200L), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>barrier_matrix[<span class="fu">sample.int</span>(16200L, 10L)] <span class="ot">&lt;-</span> <span class="cn">NA_integer_</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">update_rst =</span> barrier_matrix)</span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>   origins destinations distances layer</span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">8229741</span>     <span class="dv">0</span></span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span>     <span class="dv">0</span></span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span>     <span class="dv">0</span></span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>   <span class="dv">8229741</span>     <span class="dv">1</span></span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span>     <span class="dv">1</span></span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span>     <span class="dv">1</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+In each of the two cases, <code>update_rst</code> marks ten cells in
+<code>rst</code> to be set to <code>NA</code>, once using a vector and
+once using a matrix. In either approach, the ten cells do not affect the
+paths and accordingly the results are the same for both layers.
+</p>
+<p><br></p>
+</div>
+<div id="performance-optimization" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Performance
+Optimization</h1>
+<p style="text-align: justify">
+Performance optimization is a central design principle of
+<code>spaths</code>. <code>shortest_paths</code>’ runs with defaults
+that are optimal for the average use case. Nonetheless, there are some
+performance considerations that should generally be accounted for and
+various parameters that can help in tailoring the function execution to
+the application.
+</p>
+<p style="text-align: justify">
+The number of non-<code>NA</code> pixels in <code>rst</code> has the
+largest influence on both computational time and RAM demand. Crop the
+<code>rst</code> to the relevant area and set any cells that the
+shortest paths are do surely no pass through to <code>NA</code>. The
+quantity of non-<code>NA</code> cells does not only determine the size
+of the graph, but the size of multiple intermediate objects, the number
+of edge weights to derive, and the number of places to consider in the
+shortest path algorithm.
+</p>
+<p style="text-align: justify">
+To be more precise, the primary contributor to graph size is the number
+of edges: the quantity of links between cells. Of course, the number of
+edges increases in the grid cell count. There is an option to influence
+this link though. <code>shortest_paths</code> builds on the above
+described queen’s case contiguity with up to eight edges per vertex.
+Changing <code>contiguity</code> to <code>&quot;root&quot;</code> cuts RAM
+consumption and computational time. Yet, it may induce less desireable
+paths than <code>contiguity = &quot;queen&quot;</code> does.
+</p>
+<p style="text-align: justify">
+You can track the function’s progress with
+<code>show_progress = TRUE</code>. This prints messages on stages of
+<code>shortest_paths</code>, including a progress bar, if the number of
+paths or <code>update_rst</code> elements is less than or equal to
+<code>bar_limit</code>. <code>bar_limit</code> defaults to 150. In the
+example below, the function prints three <code>=</code>, one per path.
+<code>show_progress = TRUE</code> is meant for testing purposes.
+Especially printing a progress bar from a parallelized function
+execution can prolong runtimes because the program limits writing to
+output to one thread at a time. If you choose to print a progress bar,
+do not set <code>bar_limit</code> too high, which can cause the output
+buffer to overflow and crash the program.
+</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">show_progress =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>Checking arguments</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>Converting spatial inputs</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>Preparing algoritm inputs</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>Starting distances calculation</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="sc">|---</span><span class="er">|</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="er">|===|</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>Generating output object</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>   origins destinations distances</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>     <span class="sc">&lt;</span>int<span class="sc">&gt;</span>        <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">2</span>  <span class="dv">19627694</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">7290325</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>  <span class="dv">14467797</span></span></code></pre></div>
+<p><br></p>
+<p style="text-align: justify">
+Deriving lines is computationally more expensive and requires more RAM
+than deriving distances. Storing the coordinates of 10,000 lines
+comprised of 500,000 cells on average each, requires 74.5 GB RAM.
+Storing the distances associated with those 10,000 paths requires 78.1
+KB RAM, or 0.0001 percent as much as storing the coordinates. This is,
+of course, not the only information that the function holds. There are
+intermediate objects etc. Yet, the computational requirements of
+assembling path lines should not be underestimated.
+</p>
+<p style="text-align: justify">
+By default, <code>ncores</code> is <code>NULL</code> and
+<code>shortest_paths</code> parallelizes across all of the machine’s CPU
+cores. It is implemented with OpenMP in C++. OpenMP is much more
+efficient than R level parallelism and scales quasi linearly in the
+number of cores. Each thread runs an iteration of the shortest paths
+algorithm. How many iterations there are depends on the number of origin
+and destination points. The software utilizes shared memory parallelism.
+Hence, objects that are shared across executions of the
+graph-theoretical algorithm, like the graph and <code>update_rst</code>,
+are not copied. Instead, all threads share the same representation. This
+does not mean that the RAM use does not increase in the number of cores.
+Each execution of the shortest path algorithm comes with its own
+objects, such as the priority queue managing the order of the cells to
+be visited, which need allocation. So, explicitly setting the number of
+cores to a value below the default is a way of reducing RAM consumption.
+</p>
+<p style="text-align: justify">
+OpenMP is commonly not available on MacOS by default. This is not
+specific to <code>spaths</code>, but affects many modern R packages that
+are geared towards performance. It implies that the package may be much
+faster on Windows and Linux than on MacOS.
+</p>
+<p style="text-align: justify">
+<code>shortest_paths</code> runs Dijsktra’s algorithm to identify
+shortest paths between points. It runs the algorithm once per origin. If
+you provide one origin and ten destinations, the function produces ten
+paths and runs the algorithm once. If you provide two origins and five
+destinations, the function also produces ten paths, but runs the
+algorithm twice. The second example, therefore, takes longer than the
+first one. If the generated graph is undirected, it does not matter, if
+you pass two origins and five destinations or five origins and two
+destinations. <code>shortest_paths</code> automatically adjusts the
+direction to minimize the frequency with which Dijkstra’s <span class="citation">(1959)</span> algorithm is called. In the example, it
+would be called twice in either case.
+</p>
+<p style="text-align: justify">
+The algorithm by default derives the shortest paths from an origin to
+other cells of the same graph until all destination cells have been
+visited. This technique allows the algorithm to potentially stop before
+having visited each vertex. Yet, it comes at the cost of checking for
+each visited cell whether it is in the set of destinations. Hence, the
+default <code>early_stopping = TRUE</code> is efficient when point pairs
+are close to each other compared to the entirety of cells. If at least
+one points pair in an execution of the shortest paths algorithm is far
+from each other, the alternative <code>early_stopping = FALSE</code> can
+be faster. It derives the distance to all other cells and then picks the
+destinations cells from the result, avoiding the check for destination
+cells while iterating through the graph.
+<code>early_stopping = TRUE</code> and
+<code>early_stopping = FALSE</code> produce the same results, but differ
+in computational performance.
+</p>
+<p style="text-align: justify">
+In a grid, the vector of distances between neighboring cells is made up
+of not that many unique and repeating values. That makes it efficient to
+precompute edge weights for the entire graph, and is the behavior which
+the default <code>pre = TRUE</code> induces. Computing individual edge
+weights while Dijkstra’s <span class="citation">(1959)</span> algorithm
+runs, <code>pre = FALSE</code>, requires less RAM, as the function only
+stores one edge weight at a time, but is almost always much slower than
+precomputing them all jointly. So, setting <code>pre</code> to
+<code>FALSE</code> is one of the last options to consider, when the
+machine has insufficient RAM.
+</p>
+<p style="text-align: justify">
+When <code>update_rst</code> is a list, there are two potential
+dimensions for parallelism. In iterating over the updated grids, the
+function could parallelize at the level of point connections, like in
+the base grid, or it could parallelize across grids, i.e. list elements
+of <code>update_rst</code>. By default the function chooses the latter,
+meaning <code>par_lvl</code> is <code>&quot;update_rst&quot;</code>. All
+connections in the grid updated with the first element of
+<code>update_rst</code> are handled by one core, all connections in the
+grid updated with the second element of <code>update_rst</code> are
+handled by another core, etc. If <code>par_lvl</code> is
+<code>&quot;points&quot;</code>, the function instead calls the former option. It
+computes all connections in the grid updated with the first element of
+<code>update_rst</code> in parallel, then computes all connections in
+the grid updated with the second element of <code>update_rst</code> in
+parallel, etc. The <code>par_lvl</code> argument only affects the grids
+updated with <code>update_rst</code> list elements. The unupdated base
+grid always uses the <code>&quot;points&quot;</code> strategy. Which
+<code>par_lvl</code> option is preferred depends on the number of
+recomputed paths and the number of <code>update_rst</code> list
+elements. Assume you run <code>shortest_paths</code> with 8 CPU cores,
+pass <code>update_rst</code> of two elements, and run the shortest paths
+algorithm 16 times per updated grid. <code>par_lvl = &quot;update_rst&quot;</code>
+would utilize two cores and leave six cores idle.
+<code>par_lvl = &quot;points&quot;</code>, in contrast, would use all 8 cores,
+commonly running the algorithm twice per core. It does not matter how
+many connections there are in total and how often Dijkstra’s <span class="citation">(1959)</span> algorithm is called in the base grid.
+Only paths that are affected by the grid updating, i.e. where
+<code>update_rst</code> sets at least one cell on the path to
+<code>NA</code>, are recomputed.
+</p>
+<p style="text-align: justify">
+Internally, <code>shortest_paths</code> stores paths in the form of cell
+numbers. By default, these are four byte signed integers, the same type
+R uses for integers. Only if <code>output</code> is <code>&quot;lines&quot;</code>
+or <code>&quot;both&quot;</code>, are these cell numbers converted to coordinates,
+usually two 8 byte double precision floating point numbers per cell,
+before the function returns. If <code>rst</code> has less than 65,535
+non-<code>NA</code> cells, you can make use of 2 byte unsigned short
+integers instead. The <code>path_type = &quot;unsigned short int&quot;</code>
+option requires half as much RAM to store cell numbers as
+<code>path_type = &quot;int&quot;</code> demands, but is slower as it comes with
+type conversions from 4 byte signed integers. The results are the same,
+irrespective of which option you employ.
+</p>
+<p style="text-align: justify">
+Another data type selection regards distances.
+<code>distance_type</code> defaults to the fastest and most precise
+option: double precision floating point numbers. <code>&quot;double&quot;</code>
+corresponds to the <code>numeric</code> type in R. It is an 8 byte type.
+Alternatively, you can choose 4 byte single precision floating point
+numbers (<code>&quot;float&quot;</code>), 4 byte signed integers
+(<code>&quot;int&quot;</code>), and 2 byte unsigned short integers
+(<code>&quot;unsigned short int&quot;</code>). Unlike <code>path_type</code>,
+<code>distance_type</code> changes the results. <code>&quot;float&quot;</code>
+stores distances between cells with lower precision than
+<code>&quot;double&quot;</code> does and <code>&quot;int&quot;</code> and
+<code>&quot;unsigned short int&quot;</code> round distances to integers. These
+deviations accumulate over a path and can induce marked differences in
+the result. Always test the effect in your application before choosing
+one of the less RAM demanding options. If <code>distance_type</code> is
+<code>&quot;int&quot;</code>, the distance between any cells, i.e. the sum of edge
+weights along any path, not just the returned ones, must not exceed
+2,147,483,647. With <code>&quot;unsigned short int&quot;</code> that limit is
+65,535, making it not applicable in most scenarios.
+<code>shortest_paths</code> does not check, if you meet these numerical
+constraints. The results are simply wrong, if you violate them.
+<code>&quot;float&quot;</code>, <code>&quot;int&quot;</code>, and
+<code>&quot;unsigned short int&quot;</code> are slower than <code>&quot;double&quot;</code>
+because they require type conversions.
+</p>
+<p><br></p>
+</div>
+<div id="contributions" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Contributions</h1>
+<p style="text-align: justify">
+Contributions to this package are highly welcome. You can submit them as
+a pull request to the <code>ChristianDueben/spaths</code> GitHub
+repository or via email to the maintainer email mentioned in the
+<code>DESCRIPTION</code> file. You may also build a package on top of
+<code>spaths</code>, as <code>movecost</code> and
+<code>leastcostpath</code> did with <code>gdistance</code>.
+</p>
+<p><br></p>
+</div>
+<div id="faq" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> FAQ</h1>
+<div id="why-do-the-lines-look-so-angular-i.e.-not-really-smooth" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Why do the lines look
+so angular, i.e. not really smooth?</h2>
+<p style="text-align: justify">
+This is because of the <code>contiguity</code> options that
+<code>spaths</code> implements: queen’s and rook’s case contiguity. As
+clarified above, these rules restrict the algorithm to traverse between
+directly adjacent cells only. Rook’s case contiguity provides access to
+four neighbors spaced at 90° angles. Queen’s case contiguity provides
+access to eight neighbors spaced at 45° angles. Incorporating types of
+contiguity that allow for traversing between second order neighbors
+would introduce a larger set of angles for the algorithm to choose from.
+However, this lets the function to skip over first degree neighbors. In
+the ship route example above, the ship could skip over land cells, such
+as islands or peninsulas. Hence, the lines are the shortest paths given
+the angles the algorithm may travel at.
+</p>
+</div>
+<div id="what-object-classes-should-i-use-for-the-inputs" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> What object classes
+should I use for the inputs?</h2>
+<p style="text-align: justify">
+The recommendation is to use SpatRaster <code>rst</code>, SpatVector
+<code>origins</code> (and SpatVector <code>destinations</code>) objects
+when handling locations on Earth. The other classes also work, but the
+recommended classes tend to be the most appropriate in that they require
+little conversion and return output in a convenient format. If the data
+do not represent locations on Earth, you need to use a matrix or list of
+matrices as <code>rst</code> with a matrix or a data frame as
+<code>origins</code> (and <code>destinations</code>). Unlike a matrix, a
+data frame accepts <code>origin_names</code> and
+<code>destination_names</code> columns of a different type than the
+coordinates.
+</p>
+</div>
+<div id="what-features-will-be-added-in-the-next-updates" class="section level2" number="8.3">
+<h2><span class="header-section-number">8.3</span> What features will be
+added in the next updates?</h2>
+<p style="text-align: justify">
+The next features include alternative shortest paths algorithms, beyond
+Dijkstra’s algorithm, and centrality measures. In the respective
+categories, the A* algorithm and closeness centrality will be first. How
+long it will take to publish these updates depends on the maintainer’s
+academic career prospects.
+</p>
+<p><br></p>
+</div>
+</div>
+<div id="references" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" style="text-align: justify">
+<div id="ref-Dijkstra1959" class="csl-entry">
+Dijkstra, E. W. 1959. <span>“<span class="nocase">A note on two problems
+in connexion with graphs</span>.”</span> <em>Numerische Mathematik</em>
+1 (1): 269–71.
+</div>
+<div id="ref-Tobler1993" class="csl-entry">
+Tobler, Waldo. 1993. <span>“<span class="nocase">Three Presentations on
+Geographical Analysis and Modeling: Non- Isotropic Geographic Modeling,
+Speculations on the Geometry of Geography, Global Spatial
+Analysis</span>.”</span> Technical Report 93-1. <span>National Center
+for Geographic Information and Analysis</span>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
