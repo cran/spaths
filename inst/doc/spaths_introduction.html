@@ -50,7 +50,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -149,6 +149,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -617,11 +618,11 @@ distance or length of the path is expressed in whatever units the
 transition function returns, such as hours of travel time with Tobler’s
 <span class="citation">(1993)</span> hiking function.
 </p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">crs =</span> <span class="st">&quot;epsg:4326&quot;</span>, <span class="at">resolution =</span> <span class="dv">2</span>, <span class="at">vals =</span> <span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L,</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="at">crs =</span> <span class="st">&quot;epsg:4326&quot;</span>, <span class="at">resolution =</span> <span class="dv">2</span>, <span class="at">vals =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="dt">L</span>, <span class="cn">NA_integer_</span>), <span class="dv">16200</span><span class="dt">L</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)))</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>destination_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(<span class="dv">3</span><span class="dt">L</span>, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>destination_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(<span class="dv">3</span><span class="dt">L</span>, <span class="at">output_type =</span> <span class="st">&quot;SpatVector&quot;</span>)</span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts)</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
@@ -853,6 +854,7 @@ than physically updating the grid would be. So, you should treat
 cells that it intersects with to <code>NA</code>, irrespective of the
 optimized implementation.
 </p>
+<p><br></p>
 </div>
 <div id="shortest-paths-between-non-earth-locations" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Shortest Paths between
@@ -873,8 +875,8 @@ and <code>extent</code> define what that matrix refers to. In our
 Martian example, we define <code>rst</code> to be a global, unprojected
 grid of a two degree resolution.
 </p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="dt">L</span>, <span class="cn">NA_integer_</span>), <span class="dv">16200</span><span class="dt">L</span>, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span></code></pre></div>
 <p><br></p>
 <p style="text-align: justify">
 Because the data is unprojected, meaning it is expressed in degrees on a
@@ -891,8 +893,8 @@ matrix, data frame, or data table of coordinates, with columns named
 <code>x</code> and <code>y</code>. The Martian example uses a data
 table.
 </p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(3L)</span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>origin_pts <span class="ot">&lt;-</span> <span class="fu">rnd_locations</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>))</span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
@@ -911,9 +913,9 @@ Earth. A difference is that grid layers are not passed as layers of a
 single SpatRaster, but as matrices in a list. As in the SpatRaster case,
 the layers can be accessed by index and name.
 </p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">even_terrain =</span> input_grid, <span class="at">temperature =</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(16200L, <span class="dv">20</span>, <span class="dv">5</span>), <span class="at">nrow =</span> <span class="dv">90</span>))</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>custom_tr <span class="ot">&lt;-</span> <span class="cf">function</span>(v1, v2) v1[[1L]] <span class="sc">*</span> v2[[1L]] <span class="sc">+</span> v1[[2L]] <span class="sc">*</span> v2[[2L]]</span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">even_terrain =</span> input_grid, <span class="at">temperature =</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(<span class="dv">16200</span><span class="dt">L</span>, <span class="dv">20</span>, <span class="dv">5</span>), <span class="at">nrow =</span> <span class="dv">90</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>custom_tr <span class="ot">&lt;-</span> <span class="cf">function</span>(v1, v2) v1[[<span class="dv">1</span><span class="dt">L</span>]] <span class="sc">*</span> v2[[<span class="dv">1</span><span class="dt">L</span>]] <span class="sc">+</span> v1[[<span class="dv">2</span><span class="dt">L</span>]] <span class="sc">*</span> v2[[<span class="dv">2</span><span class="dt">L</span>]]</span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>custom_tr <span class="ot">&lt;-</span> <span class="cf">function</span>(v1, v2) v1[[<span class="st">&quot;even_terrain&quot;</span>]] <span class="sc">*</span> v2[[<span class="st">&quot;even_terrain&quot;</span>]] <span class="sc">+</span> v1[[<span class="st">&quot;temperature&quot;</span>]] <span class="sc">*</span> v2[[<span class="st">&quot;temperature&quot;</span>]]</span>
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">tr_fun =</span> custom_tr)</span>
@@ -940,10 +942,10 @@ as <code>rst</code> and marks cells to be updated using <code>NA</code>
 values. Cells with non-<code>NA</code> values in an
 <code>update_rst</code> matrix are not updated.
 </p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">set.seed</span>(3L)</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(1L, <span class="cn">NA_integer_</span>), 16200L, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span><span class="dt">L</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>input_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="dt">L</span>, <span class="cn">NA_integer_</span>), <span class="dv">16200</span><span class="dt">L</span>, <span class="cn">TRUE</span>, <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>barrier_vector <span class="ot">&lt;-</span> <span class="fu">sample.int</span>(16200L, 10L)</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>barrier_vector <span class="ot">&lt;-</span> <span class="fu">sample.int</span>(<span class="dv">16200</span><span class="dt">L</span>, <span class="dv">10</span><span class="dt">L</span>)</span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">update_rst =</span> barrier_vector)</span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
 <span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>   origins destinations distances layer</span>
@@ -955,8 +957,8 @@ values. Cells with non-<code>NA</code> values in an
 <span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>       <span class="dv">1</span>            <span class="dv">3</span>   <span class="dv">5372309</span>     <span class="dv">1</span></span>
 <span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="dv">6</span><span class="sc">:</span>       <span class="dv">2</span>            <span class="dv">3</span>   <span class="dv">9088755</span>     <span class="dv">1</span></span>
 <span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>barrier_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep.int</span>(1L, 16200L), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
-<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>barrier_matrix[<span class="fu">sample.int</span>(16200L, 10L)] <span class="ot">&lt;-</span> <span class="cn">NA_integer_</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>barrier_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep.int</span>(<span class="dv">1</span><span class="dt">L</span>, <span class="dv">16200</span><span class="dt">L</span>), <span class="at">nrow =</span> <span class="dv">90</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>barrier_matrix[<span class="fu">sample.int</span>(<span class="dv">16200</span><span class="dt">L</span>, <span class="dv">10</span><span class="dt">L</span>)] <span class="ot">&lt;-</span> <span class="cn">NA_integer_</span></span>
 <span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="fu">shortest_paths</span>(input_grid, origin_pts, <span class="at">spherical =</span> <span class="cn">TRUE</span>, <span class="at">radius =</span> <span class="dv">3389500</span>, <span class="at">extent =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>, <span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>), <span class="at">update_rst =</span> barrier_matrix)</span>
 <span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a></span>
 <span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>   origins destinations distances layer</span>
@@ -1248,7 +1250,7 @@ academic career prospects.
 </div>
 <div id="references" class="section level1" number="9">
 <h1><span class="header-section-number">9</span> References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" style="text-align: justify">
+<div id="refs" class="references csl-bib-body hanging-indent" style="text-align: justify" entry-spacing="0">
 <div id="ref-Dijkstra1959" class="csl-entry">
 Dijkstra, E. W. 1959. <span>“<span class="nocase">A note on two problems
 in connexion with graphs</span>.”</span> <em>Numerische Mathematik</em>
