@@ -1,10 +1,10 @@
-c5a830c8d20bf957d90db6b1382a1e54 *DESCRIPTION
+306f15cb5b88873ef702baca2f9be71e *DESCRIPTION
 3a70ba9be9ea8d78d8f1a949ee80aff4 *LICENSE
 951a7da254ca2bdf50458dece5c70dca *NAMESPACE
-3cac1e49c59f3c6ca48c0a43e5c1ca3d *NEWS.md
+a8b7dd22f0c1e392095e387db6794372 *NEWS.md
 061eb204fed03b4b26866a009eaa3ead *R/RcppExports.R
 11801c200649fc156cc7c9ff7c360b2c *R/rnd_locations.R
-73f45561651e550f08bd78a665d90bcc *R/shortest_paths.R
+fd86efd8ba3957c30cb0dc29b1900d57 *R/shortest_paths.R
 6e53d1ed0a0410c01c5a8de5e232c6a7 *R/utils.R
 3d087232dddffedde06b3f72f0346a83 *README.md
 83cc299d794606d5d2ea67ed33566297 *build/vignette.rds

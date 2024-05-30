@@ -1,7 +1,7 @@
 Package: spaths
 Type: Package
 Title: Shortest Paths Between Points in Grids
-Version: 1.1.1
+Version: 1.1.2
 Authors@R: person("Christian", "Düben", email = "cdueben.ml+cran@proton.me", role = c("aut", "cre"))
 Description: Shortest paths between points in grids. Optional barriers and custom transition functions. Applications regarding planet Earth, as well as 
   generally spheres and planes. Optimized for computational performance, customizability, and user friendliness. Graph-theoretical implementation tailored 
@@ -19,8 +19,8 @@ VignetteBuilder: knitr
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2024-05-24 08:57:37 UTC; ac143977
+Packaged: 2024-05-30 21:54:02 UTC; chris
 Author: Christian Düben [aut, cre]
 Maintainer: Christian Düben <cdueben.ml+cran@proton.me>
 Repository: CRAN
-Date/Publication: 2024-05-24 22:00:03 UTC
+Date/Publication: 2024-05-30 22:20:03 UTC
