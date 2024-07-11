@@ -1,13 +1,13 @@
-306f15cb5b88873ef702baca2f9be71e *DESCRIPTION
+9171716feac3f8c1e722e64df31ff21e *DESCRIPTION
 3a70ba9be9ea8d78d8f1a949ee80aff4 *LICENSE
 951a7da254ca2bdf50458dece5c70dca *NAMESPACE
-a8b7dd22f0c1e392095e387db6794372 *NEWS.md
+c8799510a6b942ba180290304bd72f57 *NEWS.md
 061eb204fed03b4b26866a009eaa3ead *R/RcppExports.R
 11801c200649fc156cc7c9ff7c360b2c *R/rnd_locations.R
 fd86efd8ba3957c30cb0dc29b1900d57 *R/shortest_paths.R
 6e53d1ed0a0410c01c5a8de5e232c6a7 *R/utils.R
-3d087232dddffedde06b3f72f0346a83 *README.md
-83cc299d794606d5d2ea67ed33566297 *build/vignette.rds
+617271fdb7673a0b76062dc1beb33c0d *README.md
+ae3160ac0f7b88a8eaca8587606c252f *build/vignette.rds
 b47bcac7457382edfad0328ea4bf17db *inst/REFERENCES.bib
 dbb61ee26d06fd41f22d195754b3f049 *inst/doc/spaths_introduction.R
 1e65602ca1f0ff500f580f6c3170709d *inst/doc/spaths_introduction.Rmd
